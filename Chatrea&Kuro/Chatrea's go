@@ -1,0 +1,16 @@
+一度、actual patch として組んでください。
+ただし対象は follow_stutter v4 の「④進行ロジック層」だけに限定します。
+
+条件:
+- ベースは v3
+- UI層、latch層、a_time grid はなるべく触らない
+- reverse / speed は今回入れない
+- 実在する Max オブジェクトだけを使う
+- current_start の進行、折り返し、loop_min / loop_max 更新、startloop の順序保証だけを実装する
+- 可能なら確認用に number / print も付ける
+
+欲しいもの:
+1. actual patch
+2. 変更した部分の要約
+3. 実機未確認の箇所
+4. 気になる点や不安点
