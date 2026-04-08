@@ -1,0 +1,12 @@
+- latch_start を [f current_start] の左inletに直結すると、latch時に + step_ms まで走る可能性があります。
+  → 「latchは純粋リセット、tickでだけ進行」にしたいので、latch_start は [f current_start] の右inletへ保存し、
+     loop_min / loop_max は別経路で即反映する案に直したいです。
+
+- [expr ($f1 > $f2) ? $f3 : $f1] は未確認です。
+  → 共有用 blueprint では、正式に docs がある [if $f1 > $f2 then $f3 else $f1] を使った版で出してほしいです。
+
+- groove~ の接続説明は inlet番号ではなく、
+  left = speed / startloop / loop 1
+  middle = loop start
+  right = loop end
+  の表記に直してほしいです。
