@@ -1,0 +1,117 @@
+# session3: v2 採用 / v3 a_time grid
+
+date: 2026-04-08
+participants: てるちゃん / チャトレア / クロ
+
+このログは、チャトレアの session3「papapapa と a_time の位置づけ」を受けての実装記録。
+
+-----
+
+## 1. このセッションでの確定
+
+### v2 (follow + reverse) を採用版として確定
+
+file: `follow_stutter_event_v2_reverse.maxpat`
+
+- selector UI (follow) + metro 単発 trigger + speed / reverse 制御
+- speed を flonum (-4.0 〜 4.0) で連続制御
+- 負値で reverse / 倍率でピッチも変化 / 0 で停止
+- ピアノ素材で reverse + ドラッグ follow が「素晴らしい」感触
+
+これを follow_stutter の基本形として記録する。
+
+### v3 (a_time grid) を別系統として作成
+
+file: `follow_stutter_event_v3_atime.maxpat`
+
+チャトレアの session3 整理を受けて、機械的時間制度を実装した版。
+v2 とは別の系統 (buffer 名 `stutter_src_g`) で並走できる。
+
+構造:
+
+```
+[metro 100] → [a_time 15 4] → [sel 0 2] → [startloop] → groove~
+```
+
+- metro 100 = 16分の粒
+- a_time 15 4 = counter 0 15 → % 4 (16分グリッド / 4拍)
+- sel 0 2 = 拍頭と裏で発火
+
+a_time はてるちゃんの abstraction で、`#1 #2` で counter max と % 数を指定する。
+
+-----
+
+## 2. クロが理解し直したこと
+
+session3 のチャトレア整理を読んで、自分のパッチに足りなかったものを認識した。
+
+### v0/v1/v2 に欠けていた構造
+
+- 位相 (phase) の概念がない
+- 多層性 (layer) がない
+- ポリリズムの可能性がない
+- interval 可変は「ゆらぎ」方向 → 「機械的格子の強さ」と逆向き
+
+### チャトレアの整理 (再確認)
+
+- パパパパ = 装飾でも smooth な追従でもない
+- 役割分担: 演奏 / source = 有機 / trigger = 機械
+- なぜ trigger を機械にするか: 演奏が既に有機だから、trigger まで有機にすると全体が溶ける
+- a_time は単なる counter の代用ではなく、演奏に別の時間法を被せる Abstraction
+- 機械的格子の強さ = ポリリズムの可能性
+
+-----
+
+## 3. 役割分担の更新
+
+|系統                |パッチ|重心                      |性格             |
+|------------------|---|------------------------|---------------|
+|follow_stutter 基本形|v2 |speed / reverse による時間軸操作|素材を時間で前後させる    |
+|follow_stutter 格子形|v3 |a_time による機械的時間制度       |素材に外側から時間制度を被せる|
+
+両者は別々の方向に伸びる枝で、片方が他方を上書きしない。
+
+-----
+
+## 4. 残った未確認事項
+
+- groove~ が stop 状態で loop min/max を保持するか (dual-voice 構想で必要)
+- speed が負のときの startloop の挙動
+- sync 1周検出方法 (Route A 系で必要)
+- a_time の引数を後から変更できるか (要実機確認)
+- v3 の sel を多 outlet 化したときの挙動
+
+-----
+
+## 5. 次の方向 (候補)
+
+### v3 系の発展
+
+- a_time の引数を変えてポリリズム化:
+  - `a_time 19 5` → 5の格子
+  - `a_time 13 7` → 7の格子
+- sel の発火位置を変える: `sel 0 1 3` など
+- metro の値を変えて格子の速度を変える: 80, 125
+- 複数の a_time を並列に走らせて、別々の時間制度を同時に被せる
+
+### v2 系の発展
+
+- speed の連続変化 (line~ で滑らかに reverse へ移行)
+- 左右で別 speed → 時間軸ステレオ
+
+### v2 と v3 の合流点
+
+- v3 の機械的格子の上に、v2 の speed 制御を乗せる
+- = 機械的時間制度 × 時間軸操作
+
+-----
+
+## 6. このセッションでクロが書いたコード
+
+- `follow_stutter_event_v3_atime.maxpat` (新規)
+
+v0 / v1 / v2 は前セッションのまま維持。
+
+-----
+
+end of session3 log.
